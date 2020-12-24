@@ -1,12 +1,3 @@
 <div id="message_<%- message.id %>">
     <p><%- message.content %></p>
-
-    <form action="/messages/<%- message.id %>" method="POST">
-        <input
-            name="content"
-            type="text"
-            value="<%- message.content %>"
-        />
-        <button type="submit">Update</button>
-    </form>
 </div>

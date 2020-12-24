@@ -1,8 +1,5 @@
 <%- include('./templates/base_head') %>
 
-<turbo-frame id="messages_list" src="/messages">
-    <p>This message will be replaced by the response from /messages.</p>
-</turbo-frame>
-
+<%- include('./messages/index', { messages: messages }); %>
 
 <%- include('./templates/base_footer') %>

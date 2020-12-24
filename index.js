@@ -40,8 +40,7 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     res.render('index', {
-        title: 'hey',
-        message: 'hello there',
+        messages,
     })
 });
 
@@ -50,6 +49,32 @@ app.get('/messages', (req, res) => {
         messages,
     })
 })
+
+app.post('/messages', (req, res) => {
+    const { content } = req.fields || {};
+
+    const lastId = messages[messages.length - 1].id;
+
+    const newMessage = {
+        id: lastId + 1,
+        content: content || '',
+    };
+
+    console.log(`Creating new message ${newMessage.id}`);
+
+    messages.push(newMessage);
+
+
+    res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
+    res.send(
+        turboStream.append('messages', {
+            partial: 'messages/show',
+            locals: {
+                message: newMessage,
+            },
+        })
+    );
+});
 
 app.post('/messages/:messageId', (req, res) => {
     const { messageId } = req.params;

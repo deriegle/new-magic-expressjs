@@ -7,6 +7,7 @@ let viewPath = __dirname;
 module.exports.setViewsPath = (newViewPath) => viewPath = newViewPath;
 
 module.exports.replace = (target, options = {}) => base(target, 'replace', options);
+module.exports.append = (target, options = {}) => base(target, 'append', options);
 
 const base = (target, action, {
     partial,
