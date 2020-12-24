@@ -1,4 +1,4 @@
-const app = require('express')();
+const express = require('express');
 const bodyParser = require('body-parser');
 const turboStream = require('./turboStream');
 const formidable = require('express-formidable');
@@ -21,6 +21,9 @@ const messages = [
     }
 ];
 
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(formidable());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
