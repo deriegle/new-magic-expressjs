@@ -1,0 +1,10 @@
+<%- include('./templates/base_head') %>
+
+<div id="messages">
+    <% messages.forEach((message) => { %>
+        <%- include('./messages/show', { message: message }); %>
+    <% }) %>
+</div>
+
+
+<%- include('./templates/base_footer') %>
