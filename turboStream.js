@@ -1,34 +1,24 @@
-const path = require('path');
-const ejs = require('ejs');
-const fs = require('fs');
+// Promise wrapper around res.render to make it easy to render partials for turbo streams
+const render = (res, partial, locals) => {
+    return new Promise((resolve, reject) => {
+        res.render(partial, locals, (err, html) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(html);
+            }
+        });
+    });
+}
 
-let viewPath = __dirname;
-
-const setViewsPath = (newViewPath) => viewPath = newViewPath;
-
-const append = (target, options = {}) => base(target, 'append', options);
-const prepend = (target, options = {}) => base(target, 'prepend', options);
-const replace = (target, options = {}) => base(target, 'replace', options);
-const update = (target, options = {}) => base(target, 'update', options);
-const remove = (target, options = {}) => base(target, 'remove', options);
-
-const base = (target, action, {
+const stream = async (res, target, action, {
     partial,
     locals,
 }) => {
-    // TODO: Make express do the partial loading and rendering for us
-    // We shouldn't need to load the file and render it. Express should be able to do this, but I'm not positive
-    // how we can render the partial without sending it to the client yet.
-
     let content = '';
 
     if (partial) {
-        const filename = partial.endsWith('.ejs') ? partial : partial + '.ejs';
-
-        content = ejs.render(
-            fs.readFileSync(path.join(viewPath, filename), 'utf-8'),
-            locals || {},
-        );
+        content = await render(res, partial, locals)
     }
 
     return `
@@ -40,42 +30,21 @@ const base = (target, action, {
     `;
 }
 
-const middleware = (viewsPath = __dirname) => {
-    setViewsPath(viewsPath);
-
-    return (_req, res, next) => {
-        // Using setHeader with an array for the content type is the only way I could find to set
-        // the correct response content-type with text/html and turbo-stream. The content-type NPM package
-        // would not allow the turbo-stream content type. It would be nice to extend that package or expressjs to allow
-        // turbo stream usage, so that the header could be simpler.
-        //
-        // For example:
-        // res.type('turbo-stream')
-        res.turboStream = {
-            append: (target, options) => {
-                res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-                res.send(append(target, options));
-            },
-            prepend: (target, options) => {
-                res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-                res.send(prepend(target, options));
-            },
-            replace: (target, options) => {
-                res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-                res.send(replace(target, options));
-            },
-            update: (target, options) => {
-                res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-                res.send(update(target, options));
-            },
-            remove: (target, options) => {
-                res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-                res.send(remove(target, options));
-            },
-        };
-
-        next();
+const middleware = (_req, res, next) => {
+    const streamActionHandler = (action) => async (target, options) => {
+        res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
+        res.send(await stream(res, target, action, options));
     }
+
+    res.turboStream = {
+        append: streamActionHandler('append'),
+        prepend: streamActionHandler('prepend'),
+        replace: streamActionHandler('replace'),
+        update: streamActionHandler('update'),
+        remove: streamActionHandler('remove'),
+    };
+
+    next();
 }
 
 module.exports = middleware;
