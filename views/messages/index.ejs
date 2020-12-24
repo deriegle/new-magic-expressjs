@@ -1,0 +1,7 @@
+<turbo-frame id="messages_list">
+    <div id="messages">
+        <% messages.forEach((message) => { %>
+            <%- include('./show', { message: message }); %>
+        <% }) %>
+    </div>
+</div>

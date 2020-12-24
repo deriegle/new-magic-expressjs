@@ -24,6 +24,27 @@ app.get('/', (req, res) => {
     })
 });
 
+app.get('/messages', (req, res) => {
+    const messages = [
+        {
+            id: 1,
+            content: 'Hello, world',
+        },
+        {
+            id: 2,
+            content: 'Try this',
+        },
+        {
+            id: 3,
+            content: 'Again',
+        }
+    ];
+
+    res.render('messages/index', {
+        messages,
+    })
+})
+
 app.listen(PORT, () => {
     console.log('Listening on port 3001');
 });

@@ -1,10 +1,8 @@
 <%- include('./templates/base_head') %>
 
-<div id="messages">
-    <% messages.forEach((message) => { %>
-        <%- include('./messages/show', { message: message }); %>
-    <% }) %>
-</div>
+<turbo-frame id="messages_list" src="/messages">
+    <p>This message will be replaced by the response from /messages.</p>
+</turbo-frame>
 
 
 <%- include('./templates/base_footer') %>
