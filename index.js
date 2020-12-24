@@ -1,8 +1,9 @@
 const express = require('express');
-const turboStream = require('./turboStream');
 const formidable = require('express-formidable');
 const path = require('path');
-const Message = require('./message');
+
+const turboStream = require('./turboStream');
+const Message = require('./models/message');
 const messagesRouter = require('./routes/messages');
 
 const PORT = process.env.PORT || 3001;

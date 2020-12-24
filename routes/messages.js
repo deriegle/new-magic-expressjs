@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Message = require('../message');
+const Message = require('../models/message');
 
 router.param('messageId', (_req, _res, next, messageId) => {
     const message = Message.findById(messageId);
