@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const turboStream = require('./turboStream');
 const formidable = require('express-formidable');
 const path = require('path');
-const { create, getMessages, findById, removeById, updateById } = require('./messages');
+const Message = require('./message');
 
 const PORT = process.env.PORT || 3001;
 
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
     const { messageId } = req.params;
 
     if (messageId) {
-        const message = findById(messageId);
+        const message = Message.findById(messageId);
 
         if (!message) {
             return res.writeHead(404);
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     res.render('index', {
-        messages: getMessages(),
+        messages: Message.all(),
     })
 });
 
@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
 app.post('/messages', (req, res) => {
     const { content } = req.fields || {};
 
-    const message = create(content || '');
+    const message = Message.create(content || '');
 
     res.turboStream.append('messages', {
         partial: 'messages/show',
@@ -69,7 +69,7 @@ app.post('/messages', (req, res) => {
 //
 // Renders edit view for a particular message using turbo streams
 app.get('/messages/:messageId/edit', (req, res) => {
-    const message = findById(req.params.messageId); 
+    const message = Message.findById(req.params.messageId); 
 
     res.render('messages/edit', {
         message,
@@ -82,7 +82,7 @@ app.get('/messages/:messageId/edit', (req, res) => {
 
 app.post('/messages/:messageId', (req, res) => {
     const { content } = req.fields || {};
-    const message = updateById(req.params.messageId, content);
+    const message = Message.updateById(req.params.messageId, content);
 
     res.render('messages/show', {
         message,
@@ -96,7 +96,7 @@ app.post('/messages/:messageId', (req, res) => {
 app.post('/messages/:messageId/delete', (req, res) => {
     const { messageId } = req.params;
 
-    removeById(messageId);
+    Message.removeById(messageId);
 
     res.turboStream.remove(`message_${messageId}`);
 });

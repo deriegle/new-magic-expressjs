@@ -42,8 +42,8 @@ module.exports.removeById = (messageId) => {
     const index = findIndex(messageId);
 
     if (index !== -1) {
-        messages.splice(index)
+        messages.splice(index, 1)
     }
 }
 
-module.exports.getMessages = () => messages;
+module.exports.all = () => messages;
