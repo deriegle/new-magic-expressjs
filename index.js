@@ -24,7 +24,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
 
 // Custom middleware for dealing with turbo streams
-// Also used to setup views path for the turbo-stream partial rendering
 app.use(turboStream())
 
 app.get('/', (_req, res) => res.render('index', {
