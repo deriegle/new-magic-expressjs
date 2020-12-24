@@ -1,11 +1,15 @@
 <turbo-frame id="message_frame_<%- message.id %>">
-    <div id="message_<%- message.id %>">
+    <div id="message_<%- message.id %>" style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
         <p><%- message.content %></p>
 
-        <form action="/messages/<%- message.id %>/delete" method="POST">
-            <button type="submit">Remove</button>
-        </form>
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 200px">
+            <form action="/messages/<%- message.id %>/edit">
+                <button type="submit">Edit</button>
+            </form>
 
-        <a href="/messages/<%- message.id %>/edit">Edit</a>
+            <form action="/messages/<%- message.id %>/delete" method="POST">
+                <button  style="display: inline" type="submit">Remove</button>
+            </form>
+        </div>
     </div>
 </turbo-frame>
