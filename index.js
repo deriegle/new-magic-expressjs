@@ -1,5 +1,6 @@
 const express = require('express');
 const formidable = require('express-formidable');
+const methodOverride = require('method-override');
 const path = require('path');
 
 const turboStream = require('./turboStream');
@@ -16,6 +17,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Used for collecting data from form submissions
 app.use(formidable());
 
+// Used to send DELETE requests
+app.use(methodOverride('_method'));
+
 const viewsPath = path.join(__dirname, './views');
 
 app.set('view engine', 'ejs');
@@ -24,13 +28,6 @@ app.set('views', viewsPath);
 // Custom middleware for dealing with turbo streams
 // Also used to setup views path for the turbo-stream partial rendering
 app.use(turboStream(viewsPath))
-
-app.use((_req, res, next) => {
-    // Set any default variables needed by base templates
-    res.locals.pageTitle = 'New Magic Nodejs Example';
-
-    next();
-});
 
 app.get('/', (_req, res) => res.render('index', {
     messages: Message.all(),

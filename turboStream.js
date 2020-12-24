@@ -16,6 +16,10 @@ const base = (target, action, {
     partial,
     locals,
 }) => {
+    // TODO: Make express do the partial loading and rendering for us
+    // We shouldn't need to load the file and render it. Express should be able to do this, but I'm not positive
+    // how we can render the partial without sending it to the client yet.
+
     let content = '';
 
     if (partial) {

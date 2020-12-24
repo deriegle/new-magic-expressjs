@@ -51,11 +51,10 @@ router.post('/:messageId', (req, res) => {
     });
 });
 
-// POST /messages/:messageId/delete
+// DELETE /messages/:messageId
 //
-// Endpoint for deleting a message (since you can't do deletes from form submissions)
-// We should probably convert this over to using methodOverride instead
-router.post('/:messageId/delete', (req, res) => {
+// Endpoint for deleting a message 
+router.delete('/:messageId', (req, res) => {
     const { messageId } = req.params;
 
     Message.removeById(messageId);
