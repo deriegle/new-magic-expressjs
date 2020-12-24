@@ -20,14 +20,12 @@ app.use(formidable());
 // Used to send DELETE requests
 app.use(methodOverride('_method'));
 
-const viewsPath = path.join(__dirname, './views');
-
 app.set('view engine', 'ejs');
-app.set('views', viewsPath);
+app.set('views', path.join(__dirname, './views'););
 
 // Custom middleware for dealing with turbo streams
 // Also used to setup views path for the turbo-stream partial rendering
-app.use(turboStream(viewsPath))
+app.use(turboStream())
 
 app.get('/', (_req, res) => res.render('index', {
     messages: Message.all(),
