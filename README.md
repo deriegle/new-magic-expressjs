@@ -15,17 +15,13 @@ The primary goal was to learn and to provide a clear example to others on how th
 
  1. Import and use the middleware
 
- _The middleware takes a single argument for the file path to your views folder_
-
- **It also makes an assumption that you're using EJS. I want to clear this up if this gets extracted out to a separate library in the future.**
-
  ```js
  const express = require('express');
  const turboStream = require('./turboStream');
 
  const app = express();
 
- app.use(turboStream('./views'))
+ app.use(turboStream())
  ```
 
  2. Render your turbo stream response
