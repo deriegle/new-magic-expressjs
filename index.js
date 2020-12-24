@@ -76,6 +76,35 @@ app.post('/messages', (req, res) => {
     );
 });
 
+app.post('/messages/:messageId/delete', (req, res) => {
+    const { messageId } = req.params;
+    const index = messages.findIndex(({ id }) => id === parseInt(messageId));
+
+    if (index === -1) {
+        res.writeHead(404);
+        return;
+    }
+
+    messages.splice(index, 1);
+
+    res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
+    res.send(turboStream.remove(`message_${messageId}`));
+});
+
+app.get('/messages/:messageId/edit', (req, res) => {
+    const { messageId } = req.params;
+    const index = messages.findIndex(({ id }) => id === parseInt(messageId));
+
+    if (index === -1) {
+        res.writeHead(404);
+        return;
+    }
+    
+    res.render('messages/edit', {
+        message: messages[index],
+    })
+});
+
 app.post('/messages/:messageId', (req, res) => {
     const { messageId } = req.params;
 
@@ -90,16 +119,9 @@ app.post('/messages/:messageId', (req, res) => {
 
     messages[index].content = content;
 
-    res
-    .type('html')
-    .send(
-        turboStream.replace('messages', {
-            partial: 'messages/show',
-            locals: {
-                message: messages[index],
-            },
-        })
-    );
+    res.render('messages/show', {
+        message: messages[index],
+    });
 });
 
 app.listen(PORT, () => {

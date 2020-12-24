@@ -6,19 +6,26 @@ let viewPath = __dirname;
 
 module.exports.setViewsPath = (newViewPath) => viewPath = newViewPath;
 
-module.exports.replace = (target, options = {}) => base(target, 'replace', options);
 module.exports.append = (target, options = {}) => base(target, 'append', options);
+module.exports.prepend = (target, options = {}) => base(target, 'prepend', options);
+module.exports.replace = (target, options = {}) => base(target, 'replace', options);
+module.exports.update = (target, options = {}) => base(target, 'update', options);
+module.exports.remove = (target, options = {}) => base(target, 'remove', options);
 
 const base = (target, action, {
     partial,
     locals,
 }) => {
-    const filename = partial.endsWith('.ejs') ? partial : partial + '.ejs';
+    let content = '';
 
-    const content = ejs.render(
-        fs.readFileSync(path.join(viewPath, filename), 'utf-8'),
-        locals || {},
-    );
+    if (partial) {
+        const filename = partial.endsWith('.ejs') ? partial : partial + '.ejs';
+
+        content = ejs.render(
+            fs.readFileSync(path.join(viewPath, filename), 'utf-8'),
+            locals || {},
+        );
+    }
 
     return `
         <turbo-stream action="${action}" target="${target}">
