@@ -17,7 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const viewsPath = path.join(__dirname, './views');
 app.set('view engine', 'ejs');
 app.set('views', viewsPath);
-turboStream.setViewsPath(viewsPath);
+
+// Custom middleware for dealing with turbo streams
+// Also used to setup views path for the turbo-stream partial rendering
+app.use(turboStream(viewsPath))
 
 app.use((_req, res, next) => {
     // Set any default variables needed by base templates
@@ -25,7 +28,6 @@ app.use((_req, res, next) => {
 
     next();
 });
-
 
 app.use((req, res, next) => {
     const { messageId } = req.params;
@@ -55,23 +57,22 @@ app.post('/messages', (req, res) => {
 
     const message = create(content || '');
 
-    res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-    res.send(
-        turboStream.append('messages', {
-            partial: 'messages/show',
-            locals: {
-                message,
-            },
-        })
-    );
+    res.turboStream.append('messages', {
+        partial: 'messages/show',
+        locals: {
+            message,
+        }
+    })
 });
 
 // GET /messages/:messageId/edit
 //
 // Renders edit view for a particular message using turbo streams
 app.get('/messages/:messageId/edit', (req, res) => {
+    const message = findById(req.params.messageId); 
+
     res.render('messages/edit', {
-        message: findById(req.params.messageId),
+        message,
     })
 });
 
@@ -97,8 +98,7 @@ app.post('/messages/:messageId/delete', (req, res) => {
 
     removeById(messageId);
 
-    res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
-    res.send(turboStream.remove(`message_${messageId}`));
+    res.turboStream.remove(`message_${messageId}`);
 });
 
 app.listen(PORT, () => console.log('Listening on port 3001'));
