@@ -30,7 +30,7 @@ const stream = async (res, target, action, {
     `;
 }
 
-const middleware = (_req, res, next) => {
+const middleware = () => (_req, res, next) => {
     const streamActionHandler = (action) => async (target, options) => {
         res.setHeader('Content-Type', ['text/html; turbo-stream; charset=utf-8']);
         res.send(await stream(res, target, action, options));
